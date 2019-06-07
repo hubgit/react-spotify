@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { authorize, validateState } from './authorization'
+import { SpotifyProfileProvider } from './SpotifyProfileProvider'
 
 interface SpotifyContextValue {
   accessToken: string | null
@@ -66,7 +67,7 @@ export const SpotifyProvider: React.FC<{ clientID: string; scope: string }> = ({
 
   return (
     <SpotifyContext.Provider value={{ accessToken, login, logout, error }}>
-      {children}
+      <SpotifyProfileProvider>{children}</SpotifyProfileProvider>
     </SpotifyContext.Provider>
   )
 }

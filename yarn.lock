@@ -31,6 +31,11 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
+"@types/spotify-api@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.npmjs.org/@types/spotify-api/-/spotify-api-0.0.1.tgz#64657f24616ade5d41bf37876cd1a9a4ae7bf349"
+  integrity sha512-U04VetSyHF/hceog6JbpzukMjEiYzqLu4+nXIeAGTrJuW8f+3cDN/Igw7HBtdvLtGE1FUR6E22ILotnsB9cpgA==
+
 "@types/spotify-web-playback-sdk@^0.1.6":
   version "0.1.6"
   resolved "https://registry.npmjs.org/@types/spotify-web-playback-sdk/-/spotify-web-playback-sdk-0.1.6.tgz#5c012496bcf0c4e24e6838f7cdfcc66c7539cceb"
