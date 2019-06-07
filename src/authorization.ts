@@ -9,17 +9,14 @@ const generateState = () => {
   return output.join('')
 }
 
-export const authorize = (clientID: string, scope: string) => {
+export const authorize = (clientID: string, redirectURI: string, scope: string) => {
   const state = generateState()
   window.localStorage.setItem('state', state)
 
   const params = new URLSearchParams()
   params.set('response_type', 'token')
   params.set('client_id', clientID)
-  params.set(
-    'redirect_uri',
-    `${window.location.origin}${window.location.pathname}`
-  )
+  params.set('redirect_uri', redirectURI)
   params.set('scope', scope)
   params.set('state', state)
 

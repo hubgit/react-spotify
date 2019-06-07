@@ -13,9 +13,10 @@ export const SpotifyContext = React.createContext<SpotifyContextValue>(
   {} as SpotifyContextValue
 )
 
-export const SpotifyProvider: React.FC<{ clientID: string; scope: string }> = ({
+export const SpotifyProvider: React.FC<{ clientID: string; redirectURI: string; scope: string }> = ({
   children,
   clientID,
+  redirectURI,
   scope,
 }) => {
   const [error, setError] = React.useState<string | null>(null)
@@ -57,8 +58,8 @@ export const SpotifyProvider: React.FC<{ clientID: string; scope: string }> = ({
   }, [setAccessToken])
 
   const login = React.useCallback(() => {
-    authorize(clientID, scope)
-  }, [clientID, scope])
+    authorize(clientID, redirectURI, scope)
+  }, [clientID, redirectURI, scope])
 
   const logout = React.useCallback(() => {
     window.localStorage.removeItem('access_token')
