@@ -9,7 +9,11 @@ const generateState = () => {
   return output.join('')
 }
 
-export const authorize = (clientID: string, redirectURI: string, scope: string) => {
+export const authorize = (
+  clientID: string,
+  redirectURI: string,
+  scope: string
+) => {
   const state = generateState()
   window.localStorage.setItem('state', state)
 

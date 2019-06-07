@@ -21,7 +21,9 @@ export const SpotifyPlaybackProvider: React.FC<{
   const { accessToken } = React.useContext(SpotifyContext)
 
   const [error, setError] = React.useState()
-  const [playerInstance, setPlayerInstance] = React.useState<Spotify.WebPlaybackInstance>()
+  const [playerInstance, setPlayerInstance] = React.useState<
+    Spotify.WebPlaybackInstance
+  >()
   const [player, setPlayer] = React.useState<Spotify.SpotifyPlayer>()
 
   React.useEffect(() => {

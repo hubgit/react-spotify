@@ -13,12 +13,11 @@ export const SpotifyContext = React.createContext<SpotifyContextValue>(
   {} as SpotifyContextValue
 )
 
-export const SpotifyProvider: React.FC<{ clientID: string; redirectURI: string; scope: string }> = ({
-  children,
-  clientID,
-  redirectURI,
-  scope,
-}) => {
+export const SpotifyProvider: React.FC<{
+  clientID: string
+  redirectURI: string
+  scope: string
+}> = ({ children, clientID, redirectURI, scope }) => {
   const [error, setError] = React.useState<string | null>(null)
 
   const [accessToken, setAccessToken] = React.useState<string | null>(
