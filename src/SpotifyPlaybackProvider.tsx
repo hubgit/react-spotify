@@ -1,13 +1,17 @@
 import { AxiosResponse } from 'axios'
 import * as React from 'react'
-import { useSpotifyClient } from './SpotifyClient'
+import { SpotifyClientContext } from './SpotifyClientProvider'
 import { SpotifyContext } from './SpotifyProvider'
+import { SpotifyStateProvider } from './SpotifyStateProvider'
 
 interface SpotifyPlaybackContextValue {
   player?: Spotify.SpotifyPlayer
+  state?: Spotify.PlaybackState
   error?: string
   play: (uris: string[]) => Promise<AxiosResponse<void>> | undefined
 }
+
+const SCRIPT_ID = 'spotify-web-playback-sdk'
 
 export const SpotifyPlaybackContext = React.createContext(
   {} as SpotifyPlaybackContextValue
@@ -16,19 +20,21 @@ export const SpotifyPlaybackContext = React.createContext(
 export const SpotifyPlaybackProvider: React.FC<{
   deviceName: string
 }> = ({ children, deviceName }) => {
-  const client = useSpotifyClient()
-
-  const { accessToken } = React.useContext(SpotifyContext)
-
-  const [error, setError] = React.useState()
   const [playerInstance, setPlayerInstance] = React.useState<
     Spotify.WebPlaybackInstance
   >()
+
   const [player, setPlayer] = React.useState<Spotify.SpotifyPlayer>()
+
+  const [error, setError] = React.useState()
+
+  const client = React.useContext(SpotifyClientContext)
+
+  const { accessToken } = React.useContext(SpotifyContext)
 
   React.useEffect(() => {
     if (accessToken) {
-      if (!player) {
+      if (!document.getElementById(SCRIPT_ID)) {
         window.onSpotifyWebPlaybackSDKReady = () => {
           const player = new window.Spotify.Player({
             name: deviceName,
@@ -49,7 +55,8 @@ export const SpotifyPlaybackProvider: React.FC<{
         }
 
         const script = document.createElement('script')
-        script.src = 'https://sdk.scdn.co/spotify-player.js'
+        script.setAttribute('id', SCRIPT_ID)
+        script.setAttribute('src', 'https://sdk.scdn.co/spotify-player.js')
         document.body.appendChild(script)
       }
 
@@ -81,7 +88,7 @@ export const SpotifyPlaybackProvider: React.FC<{
 
   return (
     <SpotifyPlaybackContext.Provider value={{ player, error, play }}>
-      {children}
+      <SpotifyStateProvider>{children}</SpotifyStateProvider>
     </SpotifyPlaybackContext.Provider>
   )
 }

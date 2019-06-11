@@ -1,13 +1,17 @@
 import axios, { AxiosInstance } from 'axios'
-import { useContext, useEffect, useState } from 'react'
+import * as React from 'react'
 import { SpotifyContext } from './SpotifyProvider'
 
-export const useSpotifyClient = () => {
-  const { accessToken, logout } = useContext(SpotifyContext)
+export const SpotifyClientContext = React.createContext<
+  AxiosInstance | undefined
+>(undefined)
 
-  const [client, setClient] = useState<AxiosInstance>()
+export const SpotifyClientProvider: React.FC = ({ children }) => {
+  const { accessToken, logout } = React.useContext(SpotifyContext)
 
-  useEffect(() => {
+  const [client, setClient] = React.useState<AxiosInstance>()
+
+  React.useEffect(() => {
     if (accessToken) {
       const client = axios.create({
         baseURL: 'https://api.spotify.com/v1',
@@ -31,5 +35,9 @@ export const useSpotifyClient = () => {
     }
   }, [accessToken, logout, setClient])
 
-  return client
+  return (
+    <SpotifyClientContext.Provider value={client}>
+      {children}
+    </SpotifyClientContext.Provider>
+  )
 }

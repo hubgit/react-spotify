@@ -1,4 +1,4 @@
-import { useSpotifyClient } from './SpotifyClient'
+import { SpotifyClientContext } from './SpotifyClientProvider'
 import * as React from 'react'
 
 export const SpotifyProfileContext = React.createContext<
@@ -6,7 +6,7 @@ export const SpotifyProfileContext = React.createContext<
 >(undefined)
 
 export const SpotifyProfileProvider: React.FC = ({ children }) => {
-  const client = useSpotifyClient()
+  const client = React.useContext(SpotifyClientContext)
 
   const [profile, setProfile] = React.useState<SpotifyApi.UserObjectPublic>()
 

@@ -1,6 +1,7 @@
 import * as React from 'react'
-import { authorize, validateState } from './authorization'
+import { authorizationURL, readAccessToken, refresh } from './authorization'
 import { SpotifyProfileProvider } from './SpotifyProfileProvider'
+import { SpotifyClientProvider } from './SpotifyClientProvider'
 
 interface SpotifyContextValue {
   accessToken: string | null
@@ -16,49 +17,38 @@ export const SpotifyContext = React.createContext<SpotifyContextValue>(
 export const SpotifyProvider: React.FC<{
   clientID: string
   redirectURI: string
-  scope: string
-}> = ({ children, clientID, redirectURI, scope }) => {
-  const [error, setError] = React.useState<string | null>(null)
-
+  scopes: string[]
+}> = ({ children, clientID, redirectURI, scopes }) => {
   const [accessToken, setAccessToken] = React.useState<string | null>(
     window.localStorage.getItem('access_token')
   )
 
+  const [error, setError] = React.useState<string | null>(null)
+
+  const handleExpiry = React.useCallback(() => {
+    refresh(
+      authorizationURL(clientID, redirectURI, scopes),
+      setAccessToken,
+      handleExpiry
+    )
+  }, [clientID, redirectURI, scopes])
+
   React.useEffect(() => {
-    const hash = window.location.hash.substring(1)
+    try {
+      const token = readAccessToken(window.location, handleExpiry)
 
-    if (!hash) {
-      return
-    }
-
-    const params = new URLSearchParams(hash)
-    window.history.replaceState(null, '', ' ')
-
-    const state = params.get('state')
-
-    if (state) {
-      if (!validateState(state)) {
-        setError('Invalid state')
-        return
+      if (token) {
+        setAccessToken(token)
       }
-
-      if (params.has('error')) {
-        setError(params.get('error'))
-      } else if (params.has('access_token')) {
-        const token = params.get('access_token')
-        if (token) {
-          window.localStorage.setItem('access_token', token)
-          setAccessToken(token)
-        }
-
-        // TODO: fetch profile?
-      }
+    } catch (error) {
+      setError(error.message)
     }
-  }, [setAccessToken])
+  }, [setAccessToken, setError, handleExpiry])
 
   const login = React.useCallback(() => {
-    authorize(clientID, redirectURI, scope)
-  }, [clientID, redirectURI, scope])
+    // window.open(authorizationURL(clientID, redirectURI, scope))
+    window.location.href = authorizationURL(clientID, redirectURI, scopes)
+  }, [clientID, redirectURI, scopes])
 
   const logout = React.useCallback(() => {
     window.localStorage.removeItem('access_token')
@@ -67,7 +57,9 @@ export const SpotifyProvider: React.FC<{
 
   return (
     <SpotifyContext.Provider value={{ accessToken, login, logout, error }}>
-      <SpotifyProfileProvider>{children}</SpotifyProfileProvider>
+      <SpotifyClientProvider>
+        <SpotifyProfileProvider>{children}</SpotifyProfileProvider>
+      </SpotifyClientProvider>
     </SpotifyContext.Provider>
   )
 }
