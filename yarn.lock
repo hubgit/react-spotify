@@ -805,6 +805,11 @@ js-yaml@^3.13.0:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
+jso@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.npmjs.org/jso/-/jso-4.1.1.tgz#af94993496137952c6016415dac593724db43a77"
+  integrity sha512-5siCaj9b73l52BRItlW5d7jbNJ2xEyVTskjxt2I/+kggNjqip11FngAG0KqZKWfCmpIeUahVvdVlnx4r7d99Mw==
+
 json-parse-better-errors@^1.0.1:
   version "1.0.2"
   resolved "https://registry.npmjs.org/json-parse-better-errors/-/json-parse-better-errors-1.0.2.tgz#bb867cfb3450e69107c131d1c514bab3dc8bcaa9"

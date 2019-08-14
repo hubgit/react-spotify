@@ -4,5 +4,5 @@ export {
   SpotifyPlaybackProvider,
 } from './SpotifyPlaybackProvider'
 export { SpotifyProfileContext } from './SpotifyProfileProvider'
-export { SpotifyContext, SpotifyProvider } from './SpotifyProvider'
+export { SpotifyProvider } from './SpotifyProvider'
 export { SpotifyStateContext } from './SpotifyStateProvider'

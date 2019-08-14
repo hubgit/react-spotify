@@ -1,14 +1,12 @@
-import { AxiosResponse } from 'axios'
 import * as React from 'react'
 import { SpotifyClientContext } from './SpotifyClientProvider'
-import { SpotifyContext } from './SpotifyProvider'
 import { SpotifyStateProvider } from './SpotifyStateProvider'
 
 interface SpotifyPlaybackContextValue {
   player?: Spotify.SpotifyPlayer
   state?: Spotify.PlaybackState
   error?: string
-  play: (uris: string[]) => Promise<AxiosResponse<void>> | undefined
+  play: (uris: string[]) => Promise<unknown> | undefined
 }
 
 const SCRIPT_ID = 'spotify-web-playback-sdk'
@@ -30,60 +28,68 @@ export const SpotifyPlaybackProvider: React.FC<{
 
   const client = React.useContext(SpotifyClientContext)
 
-  const { accessToken } = React.useContext(SpotifyContext)
-
   React.useEffect(() => {
-    if (accessToken) {
-      if (!document.getElementById(SCRIPT_ID)) {
-        window.onSpotifyWebPlaybackSDKReady = () => {
-          const player = new window.Spotify.Player({
-            name: deviceName,
-            volume: 1.0,
-            getOAuthToken: callback => callback(accessToken),
-          })
+    if (!document.getElementById(SCRIPT_ID)) {
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        console.log('player sdk ready')
 
-          player.addListener('ready', playerInstance => {
-            setPlayerInstance(playerInstance)
-            setPlayer(player)
-          })
+        const player = new window.Spotify.Player({
+          name: deviceName,
+          volume: 1.0,
+          getOAuthToken: done => {
+            console.log('getOAuthToken')
+            client.getNewToken().then(token => {
+              if (token) {
+                done(token.access_token)
+              } else {
+                client.logout()
+              }
+            })
+          },
+        })
 
-          player.connect().then((connected: boolean) => {
-            if (!connected) {
-              setError('Could not connect')
-            }
-          })
-        }
+        player.addListener('ready', playerInstance => {
+          console.log('player ready')
+          setPlayerInstance(playerInstance)
+          setPlayer(player)
+        })
 
-        const script = document.createElement('script')
-        script.setAttribute('id', SCRIPT_ID)
-        script.setAttribute('src', 'https://sdk.scdn.co/spotify-player.js')
-        document.body.appendChild(script)
+        player.connect().then((connected: boolean) => {
+          console.log('player connected')
+          if (!connected) {
+            setError('Could not connect')
+          }
+        })
       }
 
-      return () => {
-        if (player) {
-          player.disconnect()
-        }
+      const script = document.createElement('script')
+      script.setAttribute('id', SCRIPT_ID)
+      script.setAttribute('src', 'https://sdk.scdn.co/spotify-player.js')
+      document.body.appendChild(script)
+    }
+
+    return () => {
+      if (player) {
+        player.disconnect()
       }
     }
-  }, [accessToken, deviceName, player])
+  }, [deviceName, player])
 
   const play = React.useCallback(
     (uris: string[]) => {
-      if (client && player && playerInstance) {
-        return client.put<void>(
-          '/me/player/play',
-          { uris },
-          {
-            params: {
-              // eslint-disable-next-line @typescript-eslint/camelcase
-              device_id: playerInstance.device_id,
-            },
-          }
-        )
+      if (player && playerInstance) {
+        return client.request({
+          method: 'put',
+          url: '/me/player/play',
+          data: { uris },
+          params: {
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            device_id: playerInstance.device_id,
+          },
+        })
       }
     },
-    [client, player]
+    [client, player, playerInstance]
   )
 
   return (

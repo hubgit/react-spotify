@@ -11,11 +11,13 @@ export const SpotifyProfileProvider: React.FC = ({ children }) => {
   const [profile, setProfile] = React.useState<SpotifyApi.UserObjectPublic>()
 
   React.useEffect(() => {
-    if (client) {
-      client.get('/me').then(({ data }) => {
+    client
+      .request<SpotifyApi.UserObjectPublic>({
+        url: '/me',
+      })
+      .then(data => {
         setProfile(data)
       })
-    }
   }, [client])
 
   return (
