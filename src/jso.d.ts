@@ -51,19 +51,28 @@ declare module 'jso' {
     public callback(
       data?: Response | string
     ): Token | Promise<Token> | undefined
+
     public checkToken(opts?: TokenOptions): Token | undefined
+
     public configure(config: ConfigOptions): void
+
     public dump(): Token[]
+
     public getProviderID(): string
+
     public getToken(opts?: TokenOptions): Promise<Token>
+
     public setLoader(loader: BasicLoader): void
+
     public setStore(newstore: Store): void
+
     public wipeTokens(): void
   }
 
   export declare class EventEmitter {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public on(type: string, callback: (args: any) => void): void
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public emit(type: string, ...args: any[]): void
   }
@@ -109,6 +118,7 @@ declare module 'jso' {
     public constructor()
 
     public saveState<V>(state: string, obj: V): void
+
     public getState<V>(state: string): V
 
     public hasScope(token: Token, scope: string): boolean
@@ -116,11 +126,13 @@ declare module 'jso' {
     public filterTokens(tokens: Token[], scopes: string[]): Token[]
 
     public saveToken(provider: string, token: Token): void
+
     public saveTokens(provider: string, tokens: Token[]): void
 
     public wipeTokens(provider: string): void
 
     public getToken(provider: string, scopes: string[]): Token
+
     public getTokens(provider: string): Token[]
   }
 

@@ -10,9 +10,12 @@ interface QueueItem {
 }
 
 export class ApiClient {
-  private running: boolean = false
+  private running = false
+
   private queue: QueueItem[] = []
+
   private client: AxiosInstance
+
   private jso: JSO
 
   public constructor(options: ConfigOptions, config: AxiosRequestConfig) {
