@@ -3,6 +3,7 @@ import { ConfigOptions, JSO, Token } from 'jso'
 
 interface QueueItem {
   config: AxiosRequestConfig
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resolve: (value?: any | PromiseLike<any>) => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   reject: (reason?: any) => void

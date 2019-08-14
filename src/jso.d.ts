@@ -62,7 +62,9 @@ declare module 'jso' {
   }
 
   export declare class EventEmitter {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public on(type: string, callback: (args: any) => void): void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public emit(type: string, ...args: any[]): void
   }
 
@@ -124,8 +126,10 @@ declare module 'jso' {
 
   // Errors
   export declare class Error {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public constructor(props: any)
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public set(key: any, value: any): Error
   }
 
