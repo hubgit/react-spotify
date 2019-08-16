@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { ConfigOptions, IFramePassive, JSO, Popup, Token } from 'jso'
+import { ConfigOptions, JSO, Popup, Token } from 'jso'
 
 interface QueueItem {
   config: AxiosRequestConfig

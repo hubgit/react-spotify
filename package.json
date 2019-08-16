@@ -23,8 +23,12 @@
     "preversion": "npm-run-all --parallel lint typecheck",
     "version": "yarn build"
   },
+  "dependencies": {
+    "jso": "^4.1.1"
+  },
   "devDependencies": {
     "@types/react": "^16.9.1",
+    "@types/spotify-api": "^0.0.1",
     "@types/spotify-web-playback-sdk": "^0.1.6",
     "@typescript-eslint/eslint-plugin": "^2.0.0",
     "@typescript-eslint/parser": "^2.0.0",
@@ -54,9 +58,5 @@
     "singleQuote": true,
     "trailingComma": "es5",
     "printWidth": 80
-  },
-  "dependencies": {
-    "@types/spotify-api": "^0.0.1",
-    "jso": "^4.1.1"
   }
 }
