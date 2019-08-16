@@ -24,8 +24,10 @@ export const SpotifyClientProvider: React.FC<{
         providerID: 'spotify',
         // eslint-disable-next-line @typescript-eslint/camelcase
         client_id: clientID,
+        // redirect_uri: window.location.origin,
         // eslint-disable-next-line @typescript-eslint/camelcase
-        redirect_uri: window.location.origin,
+        redirect_uri: window.location.origin + '/popup-callback',
+        // redirect_uri: window.location.origin + '/passive-callback',
         authorization: 'https://accounts.spotify.com/authorize',
         // eslint-disable-next-line @typescript-eslint/camelcase
         response_type: 'token',

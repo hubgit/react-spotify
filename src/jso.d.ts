@@ -62,7 +62,7 @@ declare module 'jso' {
 
     public getToken(opts?: TokenOptions): Promise<Token>
 
-    public setLoader(loader: BasicLoader): void
+    public setLoader(loader: typeof BasicLoader): void
 
     public setStore(newstore: Store): void
 

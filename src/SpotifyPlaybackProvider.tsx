@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { SpotifyClientContext } from './SpotifyClientProvider'
+import { SpotifyProfileContext } from './SpotifyProfileProvider'
 import { SpotifyStateProvider } from './SpotifyStateProvider'
 
 interface SpotifyPlaybackContextValue {
@@ -9,11 +10,11 @@ interface SpotifyPlaybackContextValue {
   play: (uris: string[]) => Promise<unknown> | undefined
 }
 
-const SCRIPT_ID = 'spotify-web-playback-sdk'
-
-export const SpotifyPlaybackContext = React.createContext(
-  {} as SpotifyPlaybackContextValue
-)
+export const SpotifyPlaybackContext = React.createContext<
+  SpotifyPlaybackContextValue
+>({
+  play: () => undefined,
+})
 
 export const SpotifyPlaybackProvider: React.FC<{
   deviceName: string
@@ -27,45 +28,45 @@ export const SpotifyPlaybackProvider: React.FC<{
   const [error, setError] = React.useState()
 
   const client = React.useContext(SpotifyClientContext)
+  const profile = React.useContext(SpotifyProfileContext)
 
   React.useEffect(() => {
-    if (!document.getElementById(SCRIPT_ID)) {
-      window.onSpotifyWebPlaybackSDKReady = () => {
-        console.log('player sdk ready')
+    if (profile.data) {
+      if (!document.getElementById('spotify-web-playback-sdk')) {
+        window.onSpotifyWebPlaybackSDKReady = () => {
+          console.log('player sdk ready')
 
-        const player = new window.Spotify.Player({
-          name: deviceName,
-          volume: 1.0,
-          getOAuthToken: done => {
-            console.log('getOAuthToken')
-            client.getNewToken().then(token => {
-              if (token) {
+          const player = new window.Spotify.Player({
+            name: deviceName,
+            volume: 1.0,
+            getOAuthToken: done => {
+              console.log('getOAuthToken')
+              // TODO: force a new token if invalid?
+              client.getNewToken().then(token => {
                 done(token.access_token)
-              } else {
-                client.logout()
-              }
-            })
-          },
-        })
+              }, client.logout)
+            },
+          })
 
-        player.addListener('ready', playerInstance => {
-          console.log('player ready')
-          setPlayerInstance(playerInstance)
-          setPlayer(player)
-        })
+          player.addListener('ready', playerInstance => {
+            console.log('player ready')
+            setPlayerInstance(playerInstance)
+            setPlayer(player)
+          })
 
-        player.connect().then((connected: boolean) => {
-          console.log('player connected')
-          if (!connected) {
-            setError('Could not connect')
-          }
-        })
+          player.connect().then((connected: boolean) => {
+            console.log('player connected')
+            if (!connected) {
+              setError('Could not connect')
+            }
+          })
+        }
+
+        const script = document.createElement('script')
+        script.setAttribute('id', 'spotify-web-playback-sdk')
+        script.setAttribute('src', 'https://sdk.scdn.co/spotify-player.js')
+        document.body.appendChild(script)
       }
-
-      const script = document.createElement('script')
-      script.setAttribute('id', SCRIPT_ID)
-      script.setAttribute('src', 'https://sdk.scdn.co/spotify-player.js')
-      document.body.appendChild(script)
     }
 
     return () => {
@@ -73,7 +74,7 @@ export const SpotifyPlaybackProvider: React.FC<{
         player.disconnect()
       }
     }
-  }, [deviceName, player])
+  }, [deviceName, player, profile])
 
   const play = React.useCallback(
     (uris: string[]) => {
@@ -91,6 +92,12 @@ export const SpotifyPlaybackProvider: React.FC<{
     },
     [client, player, playerInstance]
   )
+
+  React.useEffect(() => {
+    if (player && !profile.data) {
+      player.pause()
+    }
+  }, [player, profile])
 
   return (
     <SpotifyPlaybackContext.Provider value={{ player, error, play }}>

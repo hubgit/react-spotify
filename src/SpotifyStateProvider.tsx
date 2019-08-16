@@ -11,11 +11,19 @@ export const SpotifyStateProvider: React.FC = ({ children }) => {
   const { player } = React.useContext(SpotifyPlaybackContext)
 
   React.useEffect(() => {
+    const handleStateChange: Spotify.PlaybackStateListener = state => {
+      console.log({ state })
+      setState(state)
+    }
+
     if (player) {
-      player.addListener('player_state_changed', state => {
-        console.log({ state })
-        setState(state)
-      })
+      player.addListener('player_state_changed', handleStateChange)
+    }
+
+    return () => {
+      if (player) {
+        player.removeListener('player_state_changed', handleStateChange)
+      }
     }
   }, [player])
 
