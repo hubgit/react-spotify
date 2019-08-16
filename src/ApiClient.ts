@@ -25,7 +25,7 @@ export class ApiClient extends EventTarget {
 
     this.client = axios.create(config)
     this.jso = new JSO(options)
-    this.jso.setLoader(IFramePassive)
+    // this.jso.setLoader(IFramePassive)
     // this.jso.setLoader(Popup)
 
     this.jso.callback()
@@ -47,19 +47,23 @@ export class ApiClient extends EventTarget {
       return token
     }
 
-    this.jso.setLoader(IFramePassive)
+    // this.jso.setLoader(IFramePassive)
+    //
+    // try {
+    //   token = await this.jso.getToken()
+    // } catch {
+    //   console.log('No token from passive attempt')
+    // }
+
+    // if (!token) {
+    this.jso.setLoader(Popup) // TODO: popup blocked!
 
     try {
       token = await this.jso.getToken()
     } catch {
-      this.jso.setLoader(Popup)
-
-      try {
-        token = await this.jso.getToken()
-      } catch {
-        this.setAuthenticated(false)
-      }
+      console.log('No token from popup attempt')
     }
+    // }
 
     if (token) {
       this.setAuthenticated(true)
