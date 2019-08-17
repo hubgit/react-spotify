@@ -40,7 +40,9 @@ export const SpotifyClientProvider: React.FC<{
       }
     )
 
-    setClient(client)
+    client.getPassiveToken().finally(() => {
+      setClient(client)
+    })
   }, [])
 
   if (!client) {

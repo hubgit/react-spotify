@@ -27,22 +27,18 @@ export class ApiClient extends EventTarget {
     this.jso = new JSO(options)
 
     this.jso.callback()
-
-    if (this.jso.checkToken()) {
-      this.setAuthenticated(true)
-    } else {
-      // TODO: do this somewhere that can track loading state?
-      this.getPassiveToken().then(() => {
-        if (this.jso.checkToken()) {
-          this.setAuthenticated(true)
-        }
-      })
-    }
   }
 
-  public getPassiveToken = () => {
+  public getPassiveToken = async () => {
     this.jso.setLoader(IFramePassive)
-    return this.jso.getToken()
+
+    const token = await this.jso.getToken()
+
+    if (token) {
+      this.setAuthenticated(true)
+    }
+
+    return token
   }
 
   public getNewToken = async (force = false): Promise<Token> => {
@@ -51,37 +47,18 @@ export class ApiClient extends EventTarget {
       // TODO: setAuthenticated(false)?
     }
 
-    let token = this.jso.checkToken()
+    this.jso.setLoader(Popup)
 
-    if (token) {
-      return token
-    }
+    const token = await this.jso.getToken()
 
-    // this.jso.setLoader(IFramePassive)
-    //
-    // try {
-    //   token = await this.jso.getToken()
-    // } catch {
-    //   console.log('No token from passive attempt')
-    // }
-
-    // if (!token) {
-    this.jso.setLoader(Popup) // TODO: popup blocked!
-
-    try {
-      token = await this.jso.getToken()
-    } catch {
-      console.log('No token from popup attempt')
-    }
-    // }
-
-    if (token) {
-      this.setAuthenticated(true)
-      return token
-    } else {
+    if (!token) {
       this.setAuthenticated(false)
       throw new Error()
     }
+
+    this.setAuthenticated(true)
+
+    return token
   }
 
   public login = () => {

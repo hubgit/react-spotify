@@ -39,12 +39,28 @@ export const SpotifyPlaybackProvider: React.FC<{
           const player = new window.Spotify.Player({
             name: deviceName,
             volume: 1.0,
-            getOAuthToken: done => {
+            getOAuthToken: async done => {
               console.log('getOAuthToken')
+
               // TODO: force a new token if invalid?
-              client.getNewToken().then(token => {
+
+              let token
+
+              try {
+                token = await client.getPassiveToken()
+
+                if (!token) {
+                  token = await client.getNewToken()
+                }
+              } catch {
+                // ignore
+              }
+
+              if (token) {
                 done(token.access_token)
-              }, client.logout)
+              } else {
+                client.logout()
+              }
             },
           })
 
