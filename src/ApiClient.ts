@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { ConfigOptions, JSO, Popup, Token } from 'jso'
+import { ConfigOptions, IFramePassive, JSO, Popup, Token } from 'jso'
 
 interface QueueItem {
   config: AxiosRequestConfig
@@ -25,14 +25,24 @@ export class ApiClient extends EventTarget {
 
     this.client = axios.create(config)
     this.jso = new JSO(options)
-    // this.jso.setLoader(IFramePassive)
-    // this.jso.setLoader(Popup)
 
     this.jso.callback()
 
     if (this.jso.checkToken()) {
       this.setAuthenticated(true)
+    } else {
+      // TODO: do this somewhere that can track loading state?
+      this.getPassiveToken().then(() => {
+        if (this.jso.checkToken()) {
+          this.setAuthenticated(true)
+        }
+      })
     }
+  }
+
+  public getPassiveToken = () => {
+    this.jso.setLoader(IFramePassive)
+    return this.jso.getToken()
   }
 
   public getNewToken = async (force = false): Promise<Token> => {
