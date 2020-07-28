@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 declare module 'jso' {
   export declare type ResponseType =
     | 'id_token token'
@@ -45,6 +47,25 @@ declare module 'jso' {
     token_type: TokenType
   }
 
+  export declare class EventEmitter {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public on(type: string, callback: (args: any) => void): void
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public emit(type: string, ...args: any[]): void
+  }
+
+  // Loaders
+  export declare class BasicLoader {
+    public constructor(url: string)
+
+    public execute(): Promise<void>
+  }
+
+  export declare class HTTPRedirect extends BasicLoader {}
+  export declare class IFramePassive extends BasicLoader {}
+  export declare class Popup extends BasicLoader {}
+
   export declare class JSO extends EventEmitter {
     public constructor(config: ConfigOptions)
 
@@ -67,14 +88,6 @@ declare module 'jso' {
     public setStore(newstore: Store): void
 
     public wipeTokens(): void
-  }
-
-  export declare class EventEmitter {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public on(type: string, callback: (args: any) => void): void
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public emit(type: string, ...args: any[]): void
   }
 
   export declare interface TokenOptions {
@@ -150,15 +163,4 @@ declare module 'jso' {
   export declare class OAuthResponseError extends Error {
     public toString(): string
   }
-
-  // Loaders
-  export declare class BasicLoader {
-    public constructor(url: string)
-
-    public execute(): Promise<void>
-  }
-
-  export declare class HTTPRedirect extends BasicLoader {}
-  export declare class IFramePassive extends BasicLoader {}
-  export declare class Popup extends BasicLoader {}
 }

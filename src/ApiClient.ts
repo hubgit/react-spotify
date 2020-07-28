@@ -143,7 +143,7 @@ export class ApiClient extends EventTarget {
         case 409:
           // TODO: use timeout from response headers
           console.log('Waiting for 10 seconds', response)
-          await new Promise(resolve => window.setTimeout(resolve, 10000))
+          await new Promise((resolve) => window.setTimeout(resolve, 10000))
           this.queue.unshift(item)
           break
 

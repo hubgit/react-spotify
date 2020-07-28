@@ -25,7 +25,7 @@ export const SpotifyPlaybackProvider: React.FC<{
 
   const [player, setPlayer] = React.useState<Spotify.SpotifyPlayer>()
 
-  const [error, setError] = React.useState()
+  const [error, setError] = React.useState<string>()
 
   const client = React.useContext(SpotifyClientContext)
   const profile = React.useContext(SpotifyProfileContext)
@@ -39,7 +39,7 @@ export const SpotifyPlaybackProvider: React.FC<{
           const player = new window.Spotify.Player({
             name: deviceName,
             volume: 1.0,
-            getOAuthToken: async done => {
+            getOAuthToken: async (done) => {
               console.log('getOAuthToken')
 
               // TODO: force a new token if invalid?
@@ -64,7 +64,7 @@ export const SpotifyPlaybackProvider: React.FC<{
             },
           })
 
-          player.addListener('ready', playerInstance => {
+          player.addListener('ready', (playerInstance) => {
             console.log('player ready')
             setPlayerInstance(playerInstance)
             setPlayer(player)
@@ -100,7 +100,7 @@ export const SpotifyPlaybackProvider: React.FC<{
           url: '/me/player/play',
           data: { uris },
           params: {
-            // eslint-disable-next-line @typescript-eslint/camelcase
+            // eslint-disable-next-line camelcase
             device_id: playerInstance.device_id,
           },
         })

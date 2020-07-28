@@ -24,7 +24,7 @@ export const SpotifyProfileProvider: React.FC = ({ children }) => {
           .request<SpotifyApi.UserObjectPublic>({
             url: '/me',
           })
-          .then(data => {
+          .then((data) => {
             setData(data)
           })
           .catch(setError)

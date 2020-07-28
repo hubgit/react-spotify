@@ -4,7 +4,7 @@ import { ApiClient } from './ApiClient'
 export const SpotifyClientContext = React.createContext<ApiClient>(
   new ApiClient(
     {
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line camelcase
       client_id: 'foo',
       authorization: 'https://example.com',
     },
@@ -22,14 +22,14 @@ export const SpotifyClientProvider: React.FC<{
     const client = new ApiClient(
       {
         providerID: 'spotify',
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line camelcase
         client_id: clientID,
         // redirect_uri: window.location.origin,
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line camelcase
         redirect_uri: window.location.origin + '/popup-callback',
         // redirect_uri: window.location.origin + '/passive-callback',
         authorization: 'https://accounts.spotify.com/authorize',
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        // eslint-disable-next-line camelcase
         response_type: 'token',
         scopes: {
           request: scopes,
